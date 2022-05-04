@@ -1,0 +1,2 @@
+1. O conjunto first do terminal EXPRESSION é: 
+   [BOOLEAN-LITERAL, INTEGER-LITERAL, '-', '~', IDENTIFIER, '(', 'if']

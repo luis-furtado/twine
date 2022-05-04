@@ -20,8 +20,25 @@ def eval(sexpr: SExpr, env: Env) -> Value:
     """
     Executa uma S-Expression dentro do ambiente dado.
     """
-    return 42  # ... implemente a versão correta aqui!
-
+    if type(sexpr) == bool:
+        return sexpr
+    elif type(sexpr) == int:
+        return int(sexpr)
+    elif type(sexpr) == str:
+        return env[sexpr]
+    elif sexpr[0] in default_env():
+        if sexpr[0] == "|":
+            return eval(sexpr[1] if eval(sexpr[1], env) == True else sexpr[2], env)
+        elif sexpr[0] == "^":
+            return eval(sexpr[2] if eval(sexpr[1], env) == True else sexpr[1], env)
+        return default_env()[sexpr[0]](eval(sexpr[1], env), eval(sexpr[2], env))
+    elif sexpr[0] == 'if':
+        return eval(
+            sexpr[2] if sexpr[1] else sexpr[3], env
+        )
+    elif sexpr[0] == 'print':
+        print(sexpr[1])
+        return sexpr[2]
 
 def compile_function(
     argdefs: ArgDefs, restype: type, body: SExpr, env: Env
@@ -35,9 +52,18 @@ def compile_function(
     """
 
     # Coloque a implementação correta aqui!
-    def fn():
-        return ...
+    def fn(*args):
+        # Inicializa argumentos
+        local_vars = {}
+        for i in range(len(args)):
+            local_vars[argdefs[i][0]] = argdefs[i][1](args[i])
 
+        # Adiciona ao ambiente
+        local_env = ChainMap(local_vars, env)
+        local_env.update(local_vars)
+
+        # Executa no novo ambiente
+        return eval(body, local_env)
     return fn
 
 
@@ -77,7 +103,12 @@ def default_env():
     return {
         "+": lambda x, y: x + y,
         "-": lambda x, y: x - y,
-        "...": ...,
+        "/": lambda x, y: x // y,
+        "*": lambda x, y: x * y,
+        "|": lambda x, y: x or y,
+        "^": lambda x, y: x and y,
+        "=": lambda x, y: x == y,
+        "<": lambda x, y: x < y,
     }
 
 

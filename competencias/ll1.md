@@ -1,4 +1,4 @@
-# `[ll1]`: algoritmo LL(1) (5 pts)
+# `[ll1]`: algoritmo LL(1) 
 
 Responda a questão no arquivo manual/ll1.txt.
 

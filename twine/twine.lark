@@ -1,1 +1,64 @@
-// A gramática está vazia, por enquanto...
+program: _definition_list
+
+_definition_list : definition
+		 | definition _definition_list
+
+definition: IDENTIFIER "=" "f" "(" parameter_list _function_return ")" body -> define
+
+_function_return : "returns" TYPE
+
+?body : print_expression body -> print
+      | expression
+
+print_expression : "print" "(" expression ")"
+
+parameter_list : [_formal_parameters] -> params
+
+_formal_parameters : id_with_type
+    	           | id_with_type "," _formal_parameters
+
+id_with_type : IDENTIFIER ":" TYPE -> param
+
+TYPE : "integer"
+     | "boolean"
+
+?expression : simple_expression
+	    | simple_expression "=" expression -> eq
+	    | simple_expression "<" expression -> lt
+
+?simple_expression : term
+		   | term "|" simple_expression -> or_
+		   | term "+" simple_expression -> add
+		   | term "-" simple_expression -> sub
+
+?term : cond
+      | cond "^" term -> and_
+      | cond "*" term -> mul
+      | cond "/" term -> div
+
+?cond: BOOLEAN
+     | INTEGER
+     | "~" cond -> not
+     | "-" cond -> neg
+     | IDENTIFIER
+     | IDENTIFIER "(" [_argument_list] ")" -> fcall
+     | "if" "(" expression ")" expression "else" expression
+     | "(" expression ")"
+
+_argument_list : formal_arguments
+
+?formal_arguments : expression ("," expression)* -> args
+
+BOOLEAN : "true"
+        | "false"
+
+INTEGER: /0|[1-9][0-9]*/
+
+IDENTIFIER : /[a-zA-Z$][a-zA-Z0-9_$]*/
+
+WS : /\s/
+
+COMMENT : /%.*/
+
+%ignore WS
+%ignore COMMENT

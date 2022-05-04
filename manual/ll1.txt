@@ -1,0 +1,6 @@
+1. A gramática do Twine não possui problema de recursão a esquerda,
+   visto que todas as expanções são feitas a direita na gramática.
+
+
+2. O Twine interpreta a precedência e associatividade à direita, evitando
+   que ocorra recursão a esquerda na gramática do Twine.
